@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./Dashboard.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import UserProfileModel from "./UserProfileModel";
 
 function Dashboard() {
@@ -12,8 +12,8 @@ function Dashboard() {
   const token = localStorage.getItem("token");
 
   const [editingEvent, setEditingEvent] = useState(null);
-
   const [editedFields, setEditedFields] = useState({});
+  const navigate = useNavigate(); // Use useNavigate instead of useHistory
 
   const openUserProfileModal = () => {
     const userData = JSON.parse(localStorage.getItem("user"));
@@ -25,13 +25,10 @@ function Dashboard() {
     setShowUserProfileModal(false);
   };
 
-
   useEffect(() => {
     if (token) {
       fetchUserData(token);
-
       fetchUserEvents(token);
-
       fetchScheduledEvents(token);
     }
   }, [token]);
@@ -103,7 +100,6 @@ function Dashboard() {
 
   const handleEditClick = (event) => {
     setEditingEvent(event);
-
     setEditedFields({
       title: event.title,
       description: event.description,
@@ -198,26 +194,40 @@ function Dashboard() {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/login"); // Use navigate instead of history.push
+  };
+
   return (
     <div className="dashboard">
       {/* Navbar */}
       <nav className="navbar">
         {/* Left side */}
         <div className="left">
-        <span>Event management</span>   
+          <span>Event management</span>
         </div>
         {/* Right side */}
         <div className="right">
-        <Link to={"/dashboard"}><button className="dashboard-button">Dashboard</button></Link>
+          <Link to={"/dashboard"}>
+            <button className="dashboard-button">Dashboard</button>
+          </Link>
 
           <Link to="/events">
-            <button className="events-button">
-              Events
-            </button>
+            <button className="events-button">Events</button>
           </Link>
-          <Link to='/create'><button className="events-button">Create Event</button></Link>
-        
-            <button onClick={openUserProfileModal} className="profile-button">My Profile</button>
+          <Link to="/create">
+            <button className="events-button">Create Event</button>
+          </Link>
+
+          <button onClick={openUserProfileModal} className="profile-button">
+            My Profile
+          </button>
+
+          <button onClick={handleLogout} className="logout-button">
+            Logout
+          </button>
 
           <span>{userData.name}</span>
         </div>
@@ -325,14 +335,10 @@ function Dashboard() {
           )}
 
           {showUserProfileModal && (
-        <UserProfileModel
-          user={user}
-          onClose={closeUserProfileModal}
-        />
-      )}
+            <UserProfileModel user={user} onClose={closeUserProfileModal} />
+          )}
         </div>
       </div>
-      
     </div>
   );
 }
