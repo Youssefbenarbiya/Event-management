@@ -1,6 +1,6 @@
 import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom"; // Import Link here
 import "./CreateEvent.css";
-import { Link } from "react-router-dom";
 
 function CreateEvent() {
   const [title, setTitle] = useState("");
@@ -10,6 +10,7 @@ function CreateEvent() {
   const [price, setPrice] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  const navigate = useNavigate(); // Initialize navigate
   const token = localStorage.getItem("token");
 
   const handleCreateEvent = async (e) => {
@@ -29,7 +30,7 @@ function CreateEvent() {
 
       if (response.ok) {
         alert("Event created successfully!");
-        
+        navigate("/dashboard"); // Redirect to dashboard on success
       } else {
         alert("Failed to create event.");
         console.error("Failed to create event.");
@@ -48,12 +49,16 @@ function CreateEvent() {
       <nav className="navbar">
         {/* Left side */}
         <div className="left">
-        <span>Event management</span>   
+          <span>Event management</span>
         </div>
         {/* Right side */}
         <div className="right">
-        <Link to={"/dashboard"}><button className="dashboard-button">Dashboard</button></Link>
-          <Link to={"/events"}><button className="events-button">Events</button></Link>
+          <Link to={"/dashboard"}>
+            <button className="dashboard-button">Dashboard</button>
+          </Link>
+          <Link to={"/events"}>
+            <button className="events-button">Events</button>
+          </Link>
           <button className="profile-button">My Profile</button>
         </div>
       </nav>
