@@ -19,14 +19,13 @@ const eventSchema = new mongoose.Schema({
   },
   organizer: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', // Reference to the User model for the event organizer
+    ref: 'User', 
     required: true,
   },
   price: {
     type: Number,
     required:true
   }
-  // Add any other event-related fields here, such as ticket price, maximum capacity, etc.
 });
 
 const Event = mongoose.model('Event', eventSchema);
