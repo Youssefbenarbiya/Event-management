@@ -8,35 +8,6 @@
     align-items: center;
   }
   
-  /* Navbar Styles */
-  .navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #333;
-    color: #fff;
-    padding: 1rem 2rem;
-    width: 96%;
-  }
-  
-  .navbar img {
-    height: 40px;
-  }
-  
-  .navbar .left span {
-    font-size: 1.5rem;
-    margin-left: 1rem;
-  }
-  
-  .navbar .right button {
-    background-color: #fff;
-    color: #333;
-    border: none;
-    padding: 0.5rem 1rem;
-    margin-left: 1rem;
-    cursor: pointer;
-  }
-  
   /* Create Event Form Styles */
   .create-event-form {
     background-color: #fff;

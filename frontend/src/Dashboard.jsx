@@ -1,33 +1,18 @@
 import React, { useEffect, useState } from "react";
 import "./Dashboard.css";
-import { Link, useNavigate } from "react-router-dom";
-import UserProfileModel from "./UserProfileModel";
+import Header from "./Navbar";
 
 function Dashboard() {
-  const [userData, setUserData] = useState({});
   const [userEvents, setUserEvents] = useState([]);
   const [scheduledEvents, setScheduledEvents] = useState([]);
-  const [showUserProfileModal, setShowUserProfileModal] = useState(false);
-  const [user, setUser] = useState();
   const token = localStorage.getItem("token");
 
   const [editingEvent, setEditingEvent] = useState(null);
   const [editedFields, setEditedFields] = useState({});
-  const navigate = useNavigate(); // Use useNavigate instead of useHistory
-
-  const openUserProfileModal = () => {
-    const userData = JSON.parse(localStorage.getItem("user"));
-    setUser(userData);
-    setShowUserProfileModal(true);
-  };
-
-  const closeUserProfileModal = () => {
-    setShowUserProfileModal(false);
-  };
+  const [image, setImage] = useState(null);
 
   useEffect(() => {
     if (token) {
-      fetchUserData(token);
       fetchUserEvents(token);
       fetchScheduledEvents(token);
     }
@@ -58,26 +43,6 @@ function Dashboard() {
     }
   };
 
-  const fetchUserData = async (token) => {
-    try {
-      const response = await fetch("http://localhost:9090/user", {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `${token}`,
-        },
-      });
-      if (response.ok) {
-        const data = await response.json();
-        console.log(data);
-        setUserData(data);
-      } else {
-        console.error("Error fetching user data");
-      }
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-    }
-  };
-
   const fetchScheduledEvents = async (token) => {
     try {
       const response = await fetch("http://localhost:9090/ticket/user", {
@@ -103,8 +68,10 @@ function Dashboard() {
     setEditedFields({
       title: event.title,
       description: event.description,
-      date: event.date,
+      startDate: event.startDate,
+      finishDate: event.finishDate,
       venue: event.venue,
+      price: event.price,
     });
   };
 
@@ -115,7 +82,22 @@ function Dashboard() {
     });
   };
 
+  const handleImageChange = (e) => {
+    setImage(e.target.files[0]);
+  };
+
   const handleSaveClick = async () => {
+    const formData = new FormData();
+    formData.append("title", editedFields.title);
+    formData.append("description", editedFields.description);
+    formData.append("startDate", editedFields.startDate);
+    formData.append("finishDate", editedFields.finishDate);
+    formData.append("venue", editedFields.venue);
+    formData.append("price", editedFields.price);
+    if (image) {
+      formData.append("image", image);
+    }
+
     try {
       const response = await fetch(
         `http://localhost:9090/event/${editingEvent._id}`,
@@ -123,21 +105,23 @@ function Dashboard() {
           method: "PUT",
           headers: {
             Authorization: `${token}`,
-            "Content-Type": "application/json",
           },
-          body: JSON.stringify(editedFields),
+          body: formData,
         }
       );
 
       if (response.ok) {
         setUserEvents((prevUserEvents) =>
           prevUserEvents.map((event) =>
-            event.id === editingEvent.id ? { ...event, ...editedFields } : event
+            event._id === editingEvent._id
+              ? { ...event, ...editedFields }
+              : event
           )
         );
 
         setEditingEvent(null);
         setEditedFields({});
+        setImage(null);
 
         window.location.reload();
       } else {
@@ -159,7 +143,7 @@ function Dashboard() {
 
       if (response.ok) {
         setUserEvents((prevUserEvents) =>
-          prevUserEvents.filter((event) => event.id !== eventId)
+          prevUserEvents.filter((event) => event._id !== eventId)
         );
 
         window.location.reload();
@@ -182,7 +166,7 @@ function Dashboard() {
 
       if (response.ok) {
         setScheduledEvents((prevScheduledEvents) =>
-          prevScheduledEvents.filter((ticket) => ticket.event?.id !== eventId)
+          prevScheduledEvents.filter((ticket) => ticket.event?._id !== eventId)
         );
 
         window.location.reload();
@@ -194,45 +178,9 @@ function Dashboard() {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    navigate("/login"); // Use navigate instead of history.push
-  };
-
   return (
     <div className="dashboard">
-      {/* Navbar */}
-      <nav className="navbar">
-        {/* Left side */}
-        <div className="left">
-          <span>Event management</span>
-        </div>
-        {/* Right side */}
-        <div className="right">
-          <Link to={"/dashboard"}>
-            <button className="dashboard-button">Dashboard</button>
-          </Link>
-
-          <Link to="/events">
-            <button className="events-button">Events</button>
-          </Link>
-          <Link to="/create">
-            <button className="events-button">Create Event</button>
-          </Link>
-
-          <button onClick={openUserProfileModal} className="profile-button">
-            My Profile
-          </button>
-
-          <button onClick={handleLogout} className="logout-button">
-            Logout
-          </button>
-
-          <span>{userData.name}</span>
-        </div>
-      </nav>
-
+      <Header />
       <div className="dashboard-content">
         <div className="left-div">
           <h1>My Events</h1>
@@ -240,7 +188,7 @@ function Dashboard() {
             <p>No events available.</p>
           ) : (
             userEvents.map((event) => (
-              <div key={event.id} className="event-item">
+              <div key={event._id} className="event-item">
                 {event === editingEvent ? (
                   <>
                     <input
@@ -250,18 +198,24 @@ function Dashboard() {
                         handleFieldChange("title", e.target.value)
                       }
                     />
-                    <input
-                      type="text"
+                    <textarea
                       value={editedFields.description || ""}
                       onChange={(e) =>
                         handleFieldChange("description", e.target.value)
                       }
                     />
                     <input
-                      type="text"
-                      value={editedFields.date || ""}
+                      type="date"
+                      value={editedFields.startDate || ""}
                       onChange={(e) =>
-                        handleFieldChange("date", e.target.value)
+                        handleFieldChange("startDate", e.target.value)
+                      }
+                    />
+                    <input
+                      type="date"
+                      value={editedFields.finishDate || ""}
+                      onChange={(e) =>
+                        handleFieldChange("finishDate", e.target.value)
                       }
                     />
                     <input
@@ -271,6 +225,14 @@ function Dashboard() {
                         handleFieldChange("venue", e.target.value)
                       }
                     />
+                    <input
+                      type="number"
+                      value={editedFields.price || ""}
+                      onChange={(e) =>
+                        handleFieldChange("price", e.target.value)
+                      }
+                    />
+                    <input type="file" onChange={handleImageChange} />
                     <button onClick={handleSaveClick}>Save</button>
                   </>
                 ) : (
@@ -280,14 +242,28 @@ function Dashboard() {
                       {event.description ? event.description : "No Description"}
                     </p>
                     <p className="second-p">
-                      On {event.date ? formatDate(event.date) : "No Date"}
+                      Start Date:{" "}
+                      {event.startDate
+                        ? formatDate(event.startDate)
+                        : "No Date"}
+                    </p>
+                    <p className="second-p">
+                      End Date:{" "}
+                      {event.finishDate
+                        ? formatDate(event.finishDate)
+                        : "No Date"}
                     </p>
                     <p className="third-p">
-                      Venue : {event.venue ? event.venue : "No Venue"}
+                      Venue: {event.venue ? event.venue : "No Venue"}
                     </p>
                     <p className="third-p">
-                      price : $ {event.price ? event.price : "No Price"}
+                      Price: ${event.price ? event.price : "No Price"}
                     </p>
+                    <img
+                      src={`http://localhost:9090/uploads/${event.image}`}
+                      alt={event.title}
+                      className="event-image"
+                    />
                     <div className="but-div">
                       <button
                         className="Edit"
@@ -315,15 +291,33 @@ function Dashboard() {
             <p>No scheduled events available.</p>
           ) : (
             scheduledEvents.map((ticket) => (
-              <div key={ticket.event?.id} className="event-item">
-                <p>ticket</p>
+              <div key={ticket.event?._id} className="event-item">
                 <h3>{ticket.event?.title}</h3>
                 <p className="first-p">{ticket.event?.description}</p>
                 <p className="second-p">
-                  {ticket.event?.date
-                    ? formatDate(ticket.event.date)
+                  Start Date:{" "}
+                  {ticket.event?.startDate
+                    ? formatDate(ticket.event.startDate)
                     : "No Date"}
                 </p>
+                <p className="second-p">
+                  End Date:{" "}
+                  {ticket.event?.finishDate
+                    ? formatDate(ticket.event.finishDate)
+                    : "No Date"}
+                </p>
+                <p className="third-p">
+                  Venue: {ticket.event?.venue ? ticket.event.venue : "No Venue"}
+                </p>
+                <p className="third-p">
+                  Price: $
+                  {ticket.event?.price ? ticket.event.price : "No Price"}
+                </p>
+                <img
+                  src={`http://localhost:9090/uploads/${ticket.event?.image}`}
+                  alt={ticket.event?.title}
+                  className="event-image"
+                />
                 <button
                   className="Cancel"
                   onClick={() => handleCancelEventClick(ticket._id)}
@@ -332,10 +326,6 @@ function Dashboard() {
                 </button>
               </div>
             ))
-          )}
-
-          {showUserProfileModal && (
-            <UserProfileModel user={user} onClose={closeUserProfileModal} />
           )}
         </div>
       </div>

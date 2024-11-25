@@ -1,39 +1,58 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom"; // Import Link here
+import { useNavigate } from "react-router-dom";
 import "./CreateEvent.css";
+import Header from "./Navbar";
 
 function CreateEvent() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [date, setDate] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [finishDate, setFinishDate] = useState("");
   const [venue, setVenue] = useState("");
   const [price, setPrice] = useState("");
+  const [image, setImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate();
   const token = localStorage.getItem("token");
+
+  // Function to handle image file selection
+  const handleImageChange = (e) => {
+    setImage(e.target.files[0]);
+  };
 
   const handleCreateEvent = async (e) => {
     e.preventDefault();
-
     try {
       setIsLoading(true);
+      // Prepare FormData for file upload
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("description", description);
+      formData.append("startDate", startDate);
+      formData.append("finishDate", finishDate);
+      formData.append("venue", venue);
+      formData.append("price", price);
+      if (image) {
+        formData.append("image", image);
+      }
 
       const response = await fetch("http://localhost:9090/event/create", {
         method: "POST",
         headers: {
           Authorization: `${token}`,
-          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ title, description, date, venue, price }),
+        body: formData,
       });
 
       if (response.ok) {
         alert("Event created successfully!");
-        navigate("/dashboard"); // Redirect to dashboard on success
+        navigate("/dashboard");
       } else {
-        alert("Failed to create event.");
-        console.error("Failed to create event.");
+        const errorResponse = await response.json(); // Capture error response
+        alert(
+          `Failed to create event: ${errorResponse.error || "Unknown error"}`
+        );
+        console.error("Failed to create event:", errorResponse);
       }
     } catch (error) {
       alert("Error creating event.");
@@ -45,28 +64,10 @@ function CreateEvent() {
 
   return (
     <div className="create-event">
-      {/* Navbar */}
-      <nav className="navbar">
-        {/* Left side */}
-        <div className="left">
-          <span>Event management</span>
-        </div>
-        {/* Right side */}
-        <div className="right">
-          <Link to={"/dashboard"}>
-            <button className="dashboard-button">Dashboard</button>
-          </Link>
-          <Link to={"/events"}>
-            <button className="events-button">Events</button>
-          </Link>
-          <button className="profile-button">My Profile</button>
-        </div>
-      </nav>
-
-      {/* Create Event Form */}
+      <Header />
       <div className={`create-event-form ${isLoading ? "loading" : ""}`}>
         <h2>Create Event</h2>
-        <form onSubmit={handleCreateEvent}>
+        <form onSubmit={handleCreateEvent} encType="multipart/form-data">
           <input
             type="text"
             placeholder="Title"
@@ -82,9 +83,16 @@ function CreateEvent() {
           ></textarea>
           <input
             type="date"
-            placeholder="Date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
+            placeholder="Start Date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            required
+          />
+          <input
+            type="date"
+            placeholder="Finish Date"
+            value={finishDate}
+            onChange={(e) => setFinishDate(e.target.value)}
             required
           />
           <input
@@ -99,6 +107,12 @@ function CreateEvent() {
             placeholder="Price"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
+            required
+          />
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
             required
           />
           {isLoading ? (

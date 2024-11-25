@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import "./Events.css"; 
-import { Link } from "react-router-dom";
+import "./Events.css";
 import UserProfileModel from "./UserProfileModel";
+import Header from "./Navbar";
 
 function Events() {
   const [events, setEvents] = useState([]);
@@ -16,18 +16,9 @@ function Events() {
     fetchEvents();
   }, []);
 
-
-  const openUserProfileModal = () => {
-    const userData = JSON.parse(localStorage.getItem("user"));
-    setUser(userData);
-    setShowUserProfileModal(true);
-  };
-
   const closeUserProfileModal = () => {
     setShowUserProfileModal(false);
   };
-
-
 
   function formatDate(dateString) {
     const options = { year: "numeric", month: "long", day: "numeric" };
@@ -38,14 +29,14 @@ function Events() {
     try {
       const response = await fetch("http://localhost:9090/event/all", {
         headers: {
-          Authorization: `${token}`, // Include the authentication token
+          Authorization: `${token}`,
           "Content-Type": "application/json",
         },
       });
 
       if (response.ok) {
         const data = await response.json();
-        setEvents(data); 
+        setEvents(data);
       } else {
         console.error("Failed to fetch events.");
       }
@@ -54,8 +45,8 @@ function Events() {
     }
   };
 
-// Function to handle booking an event
-const handleBookEvent = async (eventId) => {
+  // Function to handle booking an event
+  const handleBookEvent = async (eventId) => {
     try {
       // Fetch the user's booked tickets
       const response = await fetch(`http://localhost:9090/ticket/user`, {
@@ -64,17 +55,19 @@ const handleBookEvent = async (eventId) => {
           "Content-Type": "application/json",
         },
       });
-  
+
       if (!response.ok) {
         console.error("Failed to fetch user tickets.");
         return;
       }
-  
+
       const data = await response.json();
       const userTickets = data.userTickets;
-  
-      const isAlreadyBooked = userTickets.some((ticket) => ticket.event._id === eventId);
-  
+
+      const isAlreadyBooked = userTickets.some(
+        (ticket) => ticket.event._id === eventId
+      );
+
       if (isAlreadyBooked) {
         setShowAlreadyBookedPopup(true);
       } else {
@@ -86,7 +79,7 @@ const handleBookEvent = async (eventId) => {
           },
           body: JSON.stringify({ eventId }),
         });
-  
+
         if (bookResponse.ok) {
           setShowSuccessPopup(true);
         } else {
@@ -97,35 +90,27 @@ const handleBookEvent = async (eventId) => {
       console.error("Error during event booking:", error);
     }
   };
-  
-  
 
   return (
     <div className="events">
-      {/* Navbar */}
-      <nav className="navbar">
-        {/* Left side */}
-        <div className="left">
-        <span>Event management</span>   
-        </div>
-        {/* Right side */}
-        <div className="right">
-        <Link to={"/dashboard"}><button className="dashboard-button">Dashboard</button></Link>
-
-          <button className="events-button">Events</button>
-          <Link to="/create"> <button className="events-button">Create Events</button></Link>
-          <button onClick={openUserProfileModal} className="profile-button">My Profile</button>
-          
-        </div>
-      </nav>
+      <Header />
 
       {/* Event cards */}
       <div className="event-cards">
         {events.map((event) => (
-          <div key={event.id} className="event-card">
+          <div key={event._id} className="event-card">
             <h2>{event.title}</h2>
+            <img
+              src={`http://localhost:9090/uploads/${event.image
+                .split("/")
+                .pop()}`} // Ensure this path is correct
+              alt={event.title}
+              className="event-image"
+            />
             <p>{event.description}</p>
-            <p>Date: {formatDate(event.date)}</p>
+            <p>Start Date: {formatDate(event.startDate)}</p>
+            <p>End Date: {formatDate(event.finishDate)}</p>{" "}
+            {/* Added finish date */}
             <p>Venue: {event.venue}</p>
             <p>Price: ${event.price}</p>
             <button
@@ -150,15 +135,14 @@ const handleBookEvent = async (eventId) => {
       {showAlreadyBookedPopup && (
         <div className="popup error-popup">
           <p>Event is already booked!</p>
-          <button onClick={() => setShowAlreadyBookedPopup(false)}>Close</button>
+          <button onClick={() => setShowAlreadyBookedPopup(false)}>
+            Close
+          </button>
         </div>
       )}
 
       {showUserProfileModal && (
-        <UserProfileModel
-          user={user}
-          onClose={closeUserProfileModal}
-        />
+        <UserProfileModel user={user} onClose={closeUserProfileModal} />
       )}
     </div>
   );

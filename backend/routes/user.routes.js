@@ -53,11 +53,9 @@ userRouter.post("/login", async (req, res) => {
       userPresent.password
     );
     if (!isPasswordValid) {
-      return res
-        .status(401)
-        .json({
-          error: "Incorrect password. Please enter the correct password.",
-        });
+      return res.status(401).json({
+        error: "Incorrect password. Please enter the correct password.",
+      });
     }
 
     const token = jwt.sign({ userId: userPresent._id }, process.env.token, {
@@ -77,11 +75,9 @@ userRouter.get("/:id", async (req, res) => {
     res.status(200).send(user);
   } catch (err) {
     console.error(err.message);
-    res
-      .status(500)
-      .json({
-        error: "Failed to retrieve user information. Please try again later.",
-      });
+    res.status(500).json({
+      error: "Failed to retrieve user information. Please try again later.",
+    });
   }
 });
 
