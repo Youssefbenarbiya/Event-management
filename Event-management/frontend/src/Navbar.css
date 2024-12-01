@@ -8,6 +8,11 @@ body {
 header {
     background-color: #333; /* Dark background for the navbar */
     color: white; /* White text color */
+    position: fixed; /* Fix the navbar at the top */
+    top: 0; /* Align to the top */
+    left: 0; /* Align to the left */
+    right: 0; /* Align to the right */
+    z-index: 1000; /* Ensure it stays above other content */
 }
 
 .navbar {
@@ -15,7 +20,7 @@ header {
     justify-content: space-between;
     align-items: center;
     padding: 15px 20px; /* Padding around the navbar */
-    width: 1855px;
+    width: 100%; /* Full width for responsiveness */
 }
 
 .left {
@@ -52,9 +57,11 @@ header {
     color: white; /* White text */
 }
 
+/* Add margin to the logout button specifically */
 .logout-button {
     background-color: #f44336; /* Red button */
     color: white; /* White text */
+    margin-right: 15px; /* Add right margin to logout button */
 }
 
 /* Hover effects for buttons */
@@ -73,6 +80,11 @@ header {
     .navbar {
         flex-direction: column; /* Stack items vertically on small screens */
         align-items: flex-start; /* Align items to the left */
+        padding-top: 60px; /* Add padding to prevent overlap with fixed navbar */
+        padding-bottom: 10px;
+        background-color: #333; /* Ensure background remains visible on small screens */
+        position: relative;
+        z-index: auto;
     }
 
     .right {

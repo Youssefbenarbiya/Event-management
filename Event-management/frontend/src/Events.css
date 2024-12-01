@@ -1,5 +1,6 @@
 /* CSS for Event Cards Container */
 .event-cards-container {
+  margin-top: 60px;
     display: grid;
     grid-template-columns: repeat(3,1fr);
     /* flex-wrap: wrap; */
