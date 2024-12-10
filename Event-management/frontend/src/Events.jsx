@@ -103,7 +103,7 @@ function Events() {
             <img
               src={`http://localhost:9090/uploads/${event.image
                 .split("/")
-                .pop()}`} // Ensure this path is correct
+                .pop()}`} 
               alt={event.title}
               className="event-image"
             />

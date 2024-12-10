@@ -134,6 +134,29 @@ function Dashboard() {
 
   const handleDeleteClick = async (eventId) => {
     try {
+      // Check if the event has any tickets
+      const ticketResponse = await fetch(
+        `http://localhost:9090/ticket/event/${eventId}`,
+        {
+          headers: {
+            Authorization: `${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (ticketResponse.ok) {
+        const ticketData = await ticketResponse.json();
+        if (ticketData.tickets.length > 0) {
+          alert("Cannot delete event. It is booked by at least one person.");
+          return;
+        }
+      } else {
+        console.error("Failed to fetch tickets for the event.");
+        return;
+      }
+
+      // Proceed with deletion if no tickets
       const response = await fetch(`http://localhost:9090/event/${eventId}`, {
         method: "DELETE",
         headers: {
@@ -154,7 +177,6 @@ function Dashboard() {
       console.error("Error during event deletion:", error);
     }
   };
-
   const handleCancelEventClick = async (eventId) => {
     try {
       const response = await fetch(`http://localhost:9090/ticket/${eventId}`, {
