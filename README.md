@@ -35,15 +35,15 @@ Explore the website live at: [Event Management Website](https://event-dsi31.verc
 
 ## Technologies Used
 - **Frontend**: ReactJS
-- **Backend**: NodeJS/Django
-- **Database**: MongoDB/PostgreSQL
+- **Backend**: Express
+- **Database**: MongoDB
 - **Deployment**: Vercel
 - **Project Management**: Agile/Scrum Methodologies
 
 ## Installation
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-repo-url/event-management.git
+   git clone https://github.com/Youssefbenarbiya/Event-management.git
    ```
 2. Navigate to the project directory:
    ```bash
@@ -83,6 +83,5 @@ We welcome contributions! To contribute:
    ```
 5. Submit a pull request.
 
-## License
-This project is licensed under the MIT License.
+
 
