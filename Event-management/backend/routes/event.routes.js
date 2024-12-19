@@ -119,7 +119,6 @@ eventRouter.delete("/:id", authMiddleware, async (req, res) => {
 
 const app = express();
 
-// Use event routes
-app.use("/event", eventRouter);
+
 
 module.exports = eventRouter;
