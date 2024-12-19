@@ -108,14 +108,7 @@ function Events() {
       <div className="event-cards">
         {events.map((event) => (
           <div key={event._id} className="event-card">
-            <h2>{event.title}</h2>
-            <img
-              src={`https://event-management-zeta-neon.vercel.app/uploads/${event.image
-                .split("/")
-                .pop()}`}
-              alt={event.title}
-              className="event-image"
-            />
+            <h2>{event.title}</h2>      
             <p>{event.description}</p>
             <p>Start Date: {formatDate(event.startDate)}</p>
             <p>End Date: {formatDate(event.finishDate)}</p>{" "}

@@ -30,10 +30,7 @@ const eventSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  image: {
-    type: String,
-    required: true,
-  },
+
 });
 
 const Event = mongoose.model("Event", eventSchema);

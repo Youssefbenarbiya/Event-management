@@ -112,12 +112,6 @@ function CreateEvent() {
             onChange={(e) => setPrice(e.target.value)}
             required
           />
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            required
-          />
           {isLoading ? (
             <div className="spinner"></div>
           ) : (

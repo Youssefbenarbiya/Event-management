@@ -7,7 +7,14 @@ const eventRouter = require('./routes/event.routes')
 const ticketRouter = require('./routes/ticket.routes')
 const connection = require('./config/db')
 app.use(express.json())
-app.use(cors())
+
+app.use(
+  cors({
+    origin: ["https://event-dsi31.vercel.app", "http://localhost:3000"],
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 app.get('/', (req,res) => {
     res.json('Welcome to the ticket booking app')

@@ -9,7 +9,6 @@ function Dashboard() {
 
   const [editingEvent, setEditingEvent] = useState(null);
   const [editedFields, setEditedFields] = useState({});
-  const [image, setImage] = useState(null);
 
   useEffect(() => {
     if (token) {
@@ -88,9 +87,6 @@ function Dashboard() {
     });
   };
 
-  const handleImageChange = (e) => {
-    setImage(e.target.files[0]);
-  };
 
   const handleSaveClick = async () => {
     const formData = new FormData();
@@ -100,9 +96,7 @@ function Dashboard() {
     formData.append("finishDate", editedFields.finishDate);
     formData.append("venue", editedFields.venue);
     formData.append("price", editedFields.price);
-    if (image) {
-      formData.append("image", image);
-    }
+  
 
     try {
       const response = await fetch(
@@ -127,7 +121,6 @@ function Dashboard() {
 
         setEditingEvent(null);
         setEditedFields({});
-        setImage(null);
 
         window.location.reload();
       } else {
@@ -266,7 +259,6 @@ function Dashboard() {
                         handleFieldChange("price", e.target.value)
                       }
                     />
-                    <input type="file" onChange={handleImageChange} />
                     <button onClick={handleSaveClick}>Save</button>
                   </>
                 ) : (
@@ -293,11 +285,7 @@ function Dashboard() {
                     <p className="third-p">
                       Price: ${event.price ? event.price : "No Price"}
                     </p>
-                    <img
-                      src={`https://event-management-zeta-neon.vercel.app/uploads/${event.image}`}
-                      alt={event.title}
-                      className="event-image"
-                    />
+                  
                     <div className="but-div">
                       <button
                         className="Edit"
@@ -347,11 +335,7 @@ function Dashboard() {
                   Price: $
                   {ticket.event?.price ? ticket.event.price : "No Price"}
                 </p>
-                <img
-                  src={`https://event-management-zeta-neon.vercel.app/uploads/${ticket.event?.image}`}
-                  alt={ticket.event?.title}
-                  className="event-image"
-                />
+               
                 <button
                   className="Cancel"
                   onClick={() => handleCancelEventClick(ticket._id)}
