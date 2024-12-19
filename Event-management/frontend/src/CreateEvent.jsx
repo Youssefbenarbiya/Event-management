@@ -10,60 +10,54 @@ function CreateEvent() {
   const [finishDate, setFinishDate] = useState("");
   const [venue, setVenue] = useState("");
   const [price, setPrice] = useState("");
-  const [image, setImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
-  // Function to handle image file selection
-  const handleImageChange = (e) => {
-    setImage(e.target.files[0]);
-  };
+const handleCreateEvent = async (e) => {
+  e.preventDefault();
+  try {
+    setIsLoading(true);
 
-  const handleCreateEvent = async (e) => {
-    e.preventDefault();
-    try {
-      setIsLoading(true);
-      // Prepare FormData for file upload
-      const formData = new FormData();
-      formData.append("title", title);
-      formData.append("description", description);
-      formData.append("startDate", startDate);
-      formData.append("finishDate", finishDate);
-      formData.append("venue", venue);
-      formData.append("price", price);
-      if (image) {
-        formData.append("image", image);
+    const eventData = {
+      title,
+      description,
+      startDate,
+      finishDate,
+      venue,
+      price,
+    };
+
+    const response = await fetch(
+      "https://event-management-zeta-neon.vercel.app/event/create",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${token}`,
+        },
+        body: JSON.stringify(eventData),
       }
+    );
 
-      const response = await fetch(
-        "https://event-management-zeta-neon.vercel.app/event/create",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `${token}`,
-          },
-          body: formData,
-        }
+    if (response.ok) {
+      alert("Event created successfully!");
+      navigate("/dashboard");
+    } else {
+      const errorResponse = await response.json(); // Capture error response
+      alert(
+        `Failed to create event: ${errorResponse.error || "Unknown error"}`
       );
-
-      if (response.ok) {
-        alert("Event created successfully!");
-        navigate("/dashboard");
-      } else {
-        const errorResponse = await response.json(); // Capture error response
-        alert(
-          `Failed to create event: ${errorResponse.error || "Unknown error"}`
-        );
-        console.error("Failed to create event:", errorResponse);
-      }
-    } catch (error) {
-      alert("Error creating event.");
-      console.error("Error creating event:", error);
-    } finally {
-      setIsLoading(false);
+      console.error("Failed to create event:", errorResponse);
     }
-  };
+  } catch (error) {
+    alert("Error creating event.");
+    console.error("Error creating event:", error);
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   return (
     <div className="create-event">
