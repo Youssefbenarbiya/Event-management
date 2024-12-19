@@ -19,7 +19,7 @@ function Header() {
   const fetchUserData = async (token) => {
     try {
       const response = await fetch(
-        "https://event-management-zeta-neon.vercel.app//user",
+        "https://event-management-zeta-neon.vercel.app/user",
         {
           headers: {
             "Content-Type": "application/json",

@@ -15,7 +15,7 @@ function SignupPage() {
       setIsLoading(true);
 
       const response = await fetch(
-        "https://event-management-zeta-neon.vercel.app//user/register",
+        "https://event-management-zeta-neon.vercel.app/user/register",
         {
           method: "POST",
           headers: {

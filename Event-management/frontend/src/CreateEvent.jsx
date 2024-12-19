@@ -37,7 +37,7 @@ function CreateEvent() {
       }
 
       const response = await fetch(
-        "https://event-management-zeta-neon.vercel.app//event/create",
+        "https://event-management-zeta-neon.vercel.app/event/create",
         {
           method: "POST",
           headers: {

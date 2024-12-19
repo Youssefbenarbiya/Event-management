@@ -26,7 +26,7 @@ function Dashboard() {
   const fetchUserEvents = async (token) => {
     try {
       const response = await fetch(
-        "https://event-management-zeta-neon.vercel.app//event",
+        "https://event-management-zeta-neon.vercel.app/event",
         {
           headers: {
             Authorization: `${token}`,
@@ -49,7 +49,7 @@ function Dashboard() {
   const fetchScheduledEvents = async (token) => {
     try {
       const response = await fetch(
-        "https://event-management-zeta-neon.vercel.app//ticket/user",
+        "https://event-management-zeta-neon.vercel.app/ticket/user",
         {
           headers: {
             Authorization: `${token}`,
@@ -106,7 +106,7 @@ function Dashboard() {
 
     try {
       const response = await fetch(
-        `https://event-management-zeta-neon.vercel.app//event/${editingEvent._id}`,
+        `https://event-management-zeta-neon.vercel.app/event/${editingEvent._id}`,
         {
           method: "PUT",
           headers: {
@@ -142,7 +142,7 @@ function Dashboard() {
     try {
       // Check if the event has any tickets
       const ticketResponse = await fetch(
-        `https://event-management-zeta-neon.vercel.app//ticket/event/${eventId}`,
+        `https://event-management-zeta-neon.vercel.app/ticket/event/${eventId}`,
         {
           headers: {
             Authorization: `${token}`,
@@ -164,7 +164,7 @@ function Dashboard() {
 
       // Proceed with deletion if no tickets
       const response = await fetch(
-        `https://event-management-zeta-neon.vercel.app//event/${eventId}`,
+        `https://event-management-zeta-neon.vercel.app/event/${eventId}`,
         {
           method: "DELETE",
           headers: {
@@ -189,7 +189,7 @@ function Dashboard() {
   const handleCancelEventClick = async (eventId) => {
     try {
       const response = await fetch(
-        `https://event-management-zeta-neon.vercel.app//ticket/${eventId}`,
+        `https://event-management-zeta-neon.vercel.app/ticket/${eventId}`,
         {
           method: "DELETE",
           headers: {
@@ -294,7 +294,7 @@ function Dashboard() {
                       Price: ${event.price ? event.price : "No Price"}
                     </p>
                     <img
-                      src={`https://event-management-zeta-neon.vercel.app//uploads/${event.image}`}
+                      src={`https://event-management-zeta-neon.vercel.app/uploads/${event.image}`}
                       alt={event.title}
                       className="event-image"
                     />
@@ -348,7 +348,7 @@ function Dashboard() {
                   {ticket.event?.price ? ticket.event.price : "No Price"}
                 </p>
                 <img
-                  src={`https://event-management-zeta-neon.vercel.app//uploads/${ticket.event?.image}`}
+                  src={`https://event-management-zeta-neon.vercel.app/uploads/${ticket.event?.image}`}
                   alt={ticket.event?.title}
                   className="event-image"
                 />

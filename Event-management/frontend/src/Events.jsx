@@ -28,7 +28,7 @@ function Events() {
   const fetchEvents = async () => {
     try {
       const response = await fetch(
-        "https://event-management-zeta-neon.vercel.app//event/all",
+        "https://event-management-zeta-neon.vercel.app/event/all",
         {
           headers: {
             Authorization: `${token}`,
@@ -53,7 +53,7 @@ function Events() {
     try {
       // Fetch the user's booked tickets
       const response = await fetch(
-        `https://event-management-zeta-neon.vercel.app//ticket/user`,
+        `https://event-management-zeta-neon.vercel.app/ticket/user`,
         {
           headers: {
             Authorization: `${token}`,
@@ -78,7 +78,7 @@ function Events() {
         setShowAlreadyBookedPopup(true);
       } else {
         const bookResponse = await fetch(
-          `https://event-management-zeta-neon.vercel.app//ticket`,
+          `https://event-management-zeta-neon.vercel.app/ticket`,
           {
             method: "POST",
             headers: {
@@ -110,7 +110,7 @@ function Events() {
           <div key={event._id} className="event-card">
             <h2>{event.title}</h2>
             <img
-              src={`https://event-management-zeta-neon.vercel.app//uploads/${event.image
+              src={`https://event-management-zeta-neon.vercel.app/uploads/${event.image
                 .split("/")
                 .pop()}`}
               alt={event.title}
