@@ -36,13 +36,16 @@ function CreateEvent() {
         formData.append("image", image);
       }
 
-      const response = await fetch("http://localhost:9090/event/create", {
-        method: "POST",
-        headers: {
-          Authorization: `${token}`,
-        },
-        body: formData,
-      });
+      const response = await fetch(
+        "https://event-management-zeta-neon.vercel.app//event/create",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `${token}`,
+          },
+          body: formData,
+        }
+      );
 
       if (response.ok) {
         alert("Event created successfully!");

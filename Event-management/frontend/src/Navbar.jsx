@@ -18,12 +18,15 @@ function Header() {
 
   const fetchUserData = async (token) => {
     try {
-      const response = await fetch("http://localhost:9090/user", {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `${token}`,
-        },
-      });
+      const response = await fetch(
+        "https://event-management-zeta-neon.vercel.app//user",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `${token}`,
+          },
+        }
+      );
       if (response.ok) {
         const data = await response.json();
         console.log(data);
