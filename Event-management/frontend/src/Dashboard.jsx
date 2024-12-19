@@ -8,6 +8,7 @@ function Dashboard() {
   const token = localStorage.getItem("token");
 
   const [editingEvent, setEditingEvent] = useState(null);
+  
   const [editedFields, setEditedFields] = useState({});
 
   useEffect(() => {
@@ -88,48 +89,40 @@ function Dashboard() {
   };
 
 
-  const handleSaveClick = async () => {
-    const formData = new FormData();
-    formData.append("title", editedFields.title);
-    formData.append("description", editedFields.description);
-    formData.append("startDate", editedFields.startDate);
-    formData.append("finishDate", editedFields.finishDate);
-    formData.append("venue", editedFields.venue);
-    formData.append("price", editedFields.price);
-  
+ const handleSaveClick = async () => {
+  try {
+    const response = await fetch(
+      `https://event-management-zeta-neon.vercel.app/event/${editingEvent._id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Authorization": `${token}`,
+          "Content-Type": "application/json", 
+        },
+        body: JSON.stringify(editedFields), 
+      }
+    );
 
-    try {
-      const response = await fetch(
-        `https://event-management-zeta-neon.vercel.app/event/${editingEvent._id}`,
-        {
-          method: "PUT",
-          headers: {
-            Authorization: `${token}`,
-          },
-          body: formData,
-        }
+    if (response.ok) {
+      setUserEvents((prevUserEvents) =>
+        prevUserEvents.map((event) =>
+          event._id === editingEvent._id
+            ? { ...event, ...editedFields }
+            : event
+        )
       );
 
-      if (response.ok) {
-        setUserEvents((prevUserEvents) =>
-          prevUserEvents.map((event) =>
-            event._id === editingEvent._id
-              ? { ...event, ...editedFields }
-              : event
-          )
-        );
-
-        setEditingEvent(null);
-        setEditedFields({});
-
-        window.location.reload();
-      } else {
-        console.error("Failed to update event.");
-      }
-    } catch (error) {
-      console.error("Error during event update:", error);
+      setEditingEvent(null);
+      setEditedFields({});
+      window.location.reload(); 
+    } else {
+      console.error("Failed to update event.");
     }
-  };
+  } catch (error) {
+    console.error("Error during event update:", error);
+  }
+};
+
 
   const handleDeleteClick = async (eventId) => {
     try {
