@@ -21,6 +21,7 @@ header {
     align-items: center;
     padding: 15px 20px; /* Padding around the navbar */
     width: 100%; /* Full width for responsiveness */
+
 }
 
 .left {
@@ -61,7 +62,7 @@ header {
 .logout-button {
     background-color: #f44336; /* Red button */
     color: white; /* White text */
-    margin-right: 15px; /* Add right margin to logout button */
+    margin-right: 400px; /* Add right margin to logout button */
 }
 
 /* Hover effects for buttons */
